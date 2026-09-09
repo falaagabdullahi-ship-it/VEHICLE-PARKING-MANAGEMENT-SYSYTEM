@@ -1,0 +1,35 @@
+@model VehicleParkingManagementSystem.Models.ViewModels.Notifications.NotificationsBellViewModel
+
+<div class="dropdown">
+    <a class="icon-btn text-decoration-none" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-bell"></i>
+        @if (Model.UnreadCount > 0)
+        {
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                @(Model.UnreadCount > 9 ? "9+" : Model.UnreadCount.ToString())
+            </span>
+        }
+    </a>
+    <div class="dropdown-menu dropdown-menu-end shadow" style="width: 320px; max-height: 400px; overflow-y: auto;">
+        <div class="d-flex justify-content-between align-items-center px-3 py-2">
+            <span class="fw-bold small">Notifications</span>
+            <a asp-controller="Notifications" asp-action="Index" class="small">View all</a>
+        </div>
+        <hr class="my-0" />
+        @if (!Model.Recent.Any())
+        {
+            <div class="text-center text-muted small py-3">No notifications yet.</div>
+        }
+        else
+        {
+            foreach (var n in Model.Recent)
+            {
+                <div class="px-3 py-2 border-bottom @(n.IsRead ? "" : "bg-light")">
+                    <div class="small fw-semibold">@n.Title</div>
+                    <div class="small text-muted">@n.Message.Split('[')[0]</div>
+                    <div class="small text-muted" style="font-size: 0.7rem;">@n.CreatedAt.ToLocalTime().ToString("d MMM, HH:mm")</div>
+                </div>
+            }
+        }
+    </div>
+</div>

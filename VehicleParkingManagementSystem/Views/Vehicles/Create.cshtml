@@ -1,0 +1,72 @@
+﻿@model VehicleParkingManagementSystem.Models.ViewModels.Vehicles.VehicleFormViewModel
+@{
+    ViewData["Title"] = "Register Vehicle";
+}
+
+<h3 class="mb-3">Register Vehicle</h3>
+
+<div class="app-card" style="max-width: 700px;">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="VehicleNumber" class="form-label"></label>
+                    <input asp-for="VehicleNumber" class="form-control" autofocus />
+                    <span asp-validation-for="VehicleNumber" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DriverId" class="form-label"></label>
+                    <select asp-for="DriverId" asp-items="Model.DriverOptions" class="form-select">
+                        <option value="">-- Select Driver --</option>
+                    </select>
+                    <span asp-validation-for="DriverId" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="OwnerName" class="form-label"></label>
+                    <input asp-for="OwnerName" class="form-control" />
+                    <span asp-validation-for="OwnerName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PhoneNumber" class="form-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="VehicleType" class="form-label"></label>
+                    <select asp-for="VehicleType" asp-items="Html.GetEnumSelectList<VehicleParkingManagementSystem.Models.VehicleType>()" class="form-select"></select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="VehicleModel" class="form-label"></label>
+                    <input asp-for="VehicleModel" class="form-control" />
+                    <span asp-validation-for="VehicleModel" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Color" class="form-label"></label>
+                    <input asp-for="Color" class="form-control" />
+                    <span asp-validation-for="Color" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="RegistrationDate" class="form-label"></label>
+                <input asp-for="RegistrationDate" class="form-control" />
+                <span asp-validation-for="RegistrationDate" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Register</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

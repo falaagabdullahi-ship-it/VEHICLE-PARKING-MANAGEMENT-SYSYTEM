@@ -1,0 +1,20 @@
+@model VehicleParkingManagementSystem.Models.ViewModels.Account.LoginViewModel
+@{
+    ViewData["Title"] = "Vehicle Parking Management System";
+    Layout = "_AuthLayout";
+}
+
+<partial name="_LoginFormCard" model="Model" />
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        document.getElementById('togglePassword')?.addEventListener('click', function () {
+            const input = document.getElementById('passwordInput');
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+    </script>
+}

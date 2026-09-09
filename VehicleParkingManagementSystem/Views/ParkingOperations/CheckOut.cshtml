@@ -1,0 +1,43 @@
+﻿@model VehicleParkingManagementSystem.Models.ViewModels.ParkingOperations.CheckOutViewModel
+@{
+    ViewData["Title"] = "Check Out";
+}
+
+<h3 class="mb-3">Check Out Vehicle</h3>
+
+<div class="app-card" style="max-width: 500px;">
+    <div class="card-body">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+        <dl class="row">
+            <dt class="col-sm-5">Vehicle Number</dt>
+            <dd class="col-sm-7">@Model.VehicleNumber</dd>
+
+            <dt class="col-sm-5">Area</dt>
+            <dd class="col-sm-7">@(Model.AreaName ?? "-")</dd>
+
+            <dt class="col-sm-5">Check-In Time</dt>
+            <dd class="col-sm-7">@Model.CheckInTime.ToLocalTime().ToString("d MMM yyyy, HH:mm")</dd>
+
+            @if (Model.PackageName is not null)
+            {
+                <dt class="col-sm-5">Package</dt>
+                <dd class="col-sm-7">@Model.PackageName (prepaid)</dd>
+            }
+
+            <dt class="col-sm-5">@(Model.PackageName is not null ? "Fee (prepaid)" : "Estimated Fee")</dt>
+            <dd class="col-sm-7 fw-bold fs-5 text-primary">@Model.EstimatedFee.ToString("C")</dd>
+        </dl>
+
+        <form asp-action="CheckOut" method="post">
+            <input type="hidden" asp-for="ParkingRecordId" />
+            <input type="hidden" asp-for="VehicleNumber" />
+            <input type="hidden" asp-for="AreaName" />
+            <input type="hidden" asp-for="CheckInTime" />
+            <input type="hidden" asp-for="EstimatedFee" />
+
+            <button type="submit" class="btn btn-danger">Confirm Check Out</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

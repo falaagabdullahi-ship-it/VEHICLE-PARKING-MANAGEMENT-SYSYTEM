@@ -1,0 +1,56 @@
+﻿@model List<VehicleParkingManagementSystem.Models.ViewModels.Reports.VehicleReportRow>
+@{
+    ViewData["Title"] = "Vehicle Report";
+}
+
+<h3 class="mb-3">Vehicle Report</h3>
+
+<form method="get" class="row g-2 mb-3 align-items-end">
+    <div class="col-md-4">
+        <label class="form-label small">Driver</label>
+        <select name="driverId" asp-items="ViewBag.DriverOptions as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>" class="form-select">
+            <option value="">All Drivers</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-secondary w-100"><i class="bi bi-filter"></i> Filter</button>
+    </div>
+</form>
+
+<div class="mb-3 no-print">
+    <a asp-action="VehiclesExportPdf" asp-route-driverId="@Context.Request.Query["driverId"]" class="btn btn-danger btn-sm">
+        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+    </a>
+    <a asp-action="VehiclesExportExcel" asp-route-driverId="@Context.Request.Query["driverId"]" class="btn btn-success btn-sm">
+        <i class="bi bi-file-earmark-excel"></i> Export Excel
+    </a>
+</div>
+
+<div class="app-card">
+    <div class="table-responsive">
+        <table class="table table-modern table-hover mb-0 align-middle">
+            <thead>
+                <tr><th>Vehicle Number</th><th>Owner</th><th>Driver</th><th>Type</th><th>Model</th><th>Registered</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model)
+                {
+                    <tr>
+                        <td>@row.VehicleNumber</td>
+                        <td>@row.OwnerName</td>
+                        <td>@row.DriverName</td>
+                        <td>@row.VehicleType</td>
+                        <td>@row.VehicleModel</td>
+                        <td>@row.RegistrationDate.ToString("d MMM yyyy")</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">No vehicles found for the selected filters.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-outline-secondary mt-3">Back to Reports</a>

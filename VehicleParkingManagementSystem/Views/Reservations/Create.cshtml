@@ -1,0 +1,58 @@
+﻿@model VehicleParkingManagementSystem.Models.ViewModels.Reservations.ReservationFormViewModel
+@{
+    ViewData["Title"] = "New Reservation";
+}
+
+<h3 class="mb-3">New Reservation</h3>
+
+<div class="app-card" style="max-width: 600px;">
+    <div class="card-body">
+        @if (!Model.VehicleOptions.Any())
+        {
+            <div class="alert alert-warning mb-0">
+                You have no registered vehicles yet. Ask a parking officer to register a vehicle under your driver profile before making a reservation.
+            </div>
+        }
+        else
+        {
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+
+                <div class="mb-3">
+                    <label asp-for="VehicleId" class="form-label"></label>
+                    <select asp-for="VehicleId" asp-items="Model.VehicleOptions" class="form-select">
+                        <option value="">-- Select Vehicle --</option>
+                    </select>
+                    <span asp-validation-for="VehicleId" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ParkingAreaId" class="form-label"></label>
+                    <select asp-for="ParkingAreaId" asp-items="Model.AreaOptions" class="form-select">
+                        <option value="">-- Any Area (auto) --</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ReservedFrom" class="form-label"></label>
+                        <input asp-for="ReservedFrom" class="form-control" />
+                        <span asp-validation-for="ReservedFrom" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="ReservedTo" class="form-label"></label>
+                        <input asp-for="ReservedTo" class="form-control" />
+                        <span asp-validation-for="ReservedTo" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Reserve</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </form>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

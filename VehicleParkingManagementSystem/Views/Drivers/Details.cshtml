@@ -1,0 +1,55 @@
+﻿@model VehicleParkingManagementSystem.Models.Driver
+@{
+    ViewData["Title"] = "Driver Profile";
+}
+
+<h3 class="mb-3">Driver Profile</h3>
+
+<div class="app-card mb-3" style="max-width: 700px;">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Name</dt>
+            <dd class="col-sm-8">@Model.FullName</dd>
+
+            <dt class="col-sm-4">Phone</dt>
+            <dd class="col-sm-8">@Model.PhoneNumber</dd>
+
+            <dt class="col-sm-4">Email</dt>
+            <dd class="col-sm-8">@(Model.Email ?? "-")</dd>
+
+            <dt class="col-sm-4">License Number</dt>
+            <dd class="col-sm-8">@(Model.LicenseNumber ?? "-")</dd>
+
+            <dt class="col-sm-4">Address</dt>
+            <dd class="col-sm-8">@(Model.Address ?? "-")</dd>
+
+            <dt class="col-sm-4">Registered</dt>
+            <dd class="col-sm-8">@Model.RegisteredDate.ToString("d MMM yyyy")</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
+    </div>
+</div>
+
+<h5>Vehicles</h5>
+<div class="app-card" style="max-width: 700px;">
+    <div class="table-responsive">
+        <table class="table mb-0">
+            <thead class="table-light">
+                <tr><th>Vehicle Number</th><th>Type</th><th>Model</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var vehicle in Model.Vehicles)
+                {
+                    <tr><td>@vehicle.VehicleNumber</td><td>@vehicle.VehicleType</td><td>@vehicle.VehicleModel</td></tr>
+                }
+                @if (!Model.Vehicles.Any())
+                {
+                    <tr><td colspan="3" class="text-center text-muted py-3">No vehicles registered.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

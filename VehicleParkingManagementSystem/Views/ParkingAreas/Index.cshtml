@@ -1,0 +1,78 @@
+﻿@model VehicleParkingManagementSystem.Models.ViewModels.PagedResult<VehicleParkingManagementSystem.Models.ParkingArea>
+@{
+    ViewData["Title"] = "Parking Areas";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Parking Areas</h3>
+    <div class="d-flex gap-2">
+        <a asp-action="ExportExcel" asp-route-search="@ViewBag.Search" class="btn btn-outline-success"><i class="bi bi-file-earmark-excel"></i> Export to Excel</a>
+        @if (User.IsInRole(VehicleParkingManagementSystem.Models.AppRoles.Admin))
+        {
+            <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> New Area</a>
+        }
+    </div>
+</div>
+
+@if (TempData["StatusMessage"] is not null)
+{
+    <div class="alert alert-success">@TempData["StatusMessage"]</div>
+}
+
+<div class="mb-4">
+    <partial name="_ParkingMap" model="(List<VehicleParkingManagementSystem.Models.ViewModels.Dashboard.ParkingMapAreaViewModel>)ViewBag.ParkingMap" />
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto flex-grow-1">
+        <input type="text" name="search" value="@ViewBag.Search" class="form-control" placeholder="Search by name or location..." />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-secondary"><i class="bi bi-search"></i> Search</button>
+    </div>
+</form>
+
+<div class="row g-3">
+    @foreach (var area in Model.Items)
+    {
+        <div class="col-md-4">
+            <div class="app-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">@area.Name @if (area.IsVip) { <span class="badge bg-warning text-dark">VIP</span> }</h5>
+                    <p class="text-muted small mb-2">@(area.Location ?? "No location set")</p>
+                </div>
+                <div class="card-footer bg-white">
+                    <a asp-action="Details" asp-route-id="@area.Id" class="btn btn-sm btn-outline-secondary">View Details</a>
+                    @if (User.IsInRole(VehicleParkingManagementSystem.Models.AppRoles.Admin))
+                    {
+                        <a asp-action="Edit" asp-route-id="@area.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@area.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    @if (!Model.Items.Any())
+    {
+        <div class="col-12"><div class="text-center text-muted py-4">No parking areas found.</div></div>
+    }
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-search="@ViewBag.Search">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+@section Scripts {
+    <script src="~/js/parking-map.js" asp-append-version="true"></script>
+    <script>setupLiveParkingMap();</script>
+}

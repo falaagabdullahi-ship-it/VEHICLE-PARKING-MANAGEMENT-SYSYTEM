@@ -1,0 +1,938 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+/* ================= App shell / sidebar layout ================= */
+
+:root {
+  --brand-blue: #2563eb;
+  --brand-blue-dark: #1d4ed8;
+  --sidebar-width: 250px;
+  --sidebar-bg: #101a2c;
+  --sidebar-bg-active: linear-gradient(90deg, #2563eb, #3b82f6);
+  --topbar-height: 128px;
+}
+
+body {
+  margin-bottom: 0;
+  background-color: #f1f4f9;
+}
+
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  background-color: var(--sidebar-bg);
+  color: #c3ccdb;
+  z-index: 1040;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease-in-out;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-sidebar.show {
+  transform: translateX(0);
+}
+
+.app-sidebar .brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1.1rem 1.1rem;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(90deg, rgba(10, 16, 30, 0.65) 0%, rgba(10, 16, 30, 0.15) 55%, rgba(10, 16, 30, 0.05) 100%),
+    url('/images/hero-car.jpg') center 62% / cover no-repeat;
+}
+
+.app-sidebar .brand .brand-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.app-sidebar .brand .brand-title {
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.1;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+}
+
+.app-sidebar .brand .brand-subtitle {
+  font-size: 0.7rem;
+  color: #9db4e0;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+}
+
+.app-sidebar-nav {
+  padding: 0.75rem 0.6rem;
+  flex: 1 1 auto;
+}
+
+.app-sidebar .nav-link {
+  color: #b7c1d6;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.88rem;
+  margin-bottom: 2px;
+}
+
+.app-sidebar .nav-link i {
+  font-size: 1rem;
+  width: 1.1rem;
+  text-align: center;
+}
+
+.app-sidebar .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.app-sidebar .nav-link.active {
+  background: var(--sidebar-bg-active);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+}
+
+.app-sidebar-footer {
+  padding: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-sidebar-footer .nav-link {
+  color: #8b98b3;
+}
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  height: var(--topbar-height);
+  background-image:
+    linear-gradient(90deg, rgba(13, 23, 48, 0.6) 0%, rgba(13, 23, 48, 0.4) 50%, rgba(13, 23, 48, 0.6) 100%),
+    url('/images/hero-car.jpg');
+  background-position: 0 0, center 55%;
+  background-size: 100% 100%, cover;
+  background-repeat: no-repeat, no-repeat;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.app-topbar .page-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #fff;
+  line-height: 1.15;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.75);
+}
+
+.app-topbar .page-subtitle {
+  font-size: 0.8rem;
+  color: #cbd6ea;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.75);
+}
+
+.app-topbar .topbar-search {
+  background-color: #f1f4f9;
+  border-radius: 999px;
+  border: 1px solid #e6e9ef;
+  padding: 0.35rem 0.9rem;
+  min-width: 220px;
+}
+
+.app-topbar .topbar-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.85rem;
+  width: 100%;
+}
+
+.app-topbar .icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #4b5668;
+  background-color: #f1f4f9;
+  position: relative;
+}
+
+.app-topbar .icon-btn:hover {
+  background-color: #e6e9ef;
+}
+
+.theme-toggle-btn {
+  border: none;
+  cursor: pointer;
+}
+
+.theme-toggle-btn .theme-icon-dark,
+.theme-toggle-btn .theme-icon-light {
+  position: absolute;
+  transition: opacity 0.25s ease, transform 0.35s ease;
+}
+
+.theme-toggle-btn .theme-icon-light {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+
+.theme-toggle-btn .theme-icon-dark {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+[data-bs-theme="dark"] .theme-toggle-btn .theme-icon-dark {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+
+[data-bs-theme="dark"] .theme-toggle-btn .theme-icon-light {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* ================= Dark mode overrides ================= */
+/* Bootstrap's own data-bs-theme="dark" already re-themes native components
+   (.card, .table, .form-control, .dropdown-menu, .badge, .btn-outline-*,
+   .pagination, .alert). These overrides cover our custom, hand-styled
+   classes that sit outside that system. */
+
+[data-bs-theme="dark"] body {
+  background-color: #0b1220;
+}
+
+[data-bs-theme="dark"] .app-content {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(10, 16, 28, 0.4) 0%, rgba(10, 16, 28, 0.58) 100%),
+    url('/images/hero-car.jpg') center 42% / cover fixed no-repeat;
+}
+
+[data-bs-theme="dark"] .app-topbar {
+  background-image:
+    linear-gradient(90deg, rgba(6, 10, 22, 0.72) 0%, rgba(6, 10, 22, 0.5) 50%, rgba(6, 10, 22, 0.72) 100%),
+    url('/images/hero-car.jpg');
+  background-position: 0 0, center 55%;
+  background-size: 100% 100%, cover;
+  background-repeat: no-repeat, no-repeat;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-bs-theme="dark"] .app-topbar .icon-btn {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+}
+
+[data-bs-theme="dark"] .app-topbar .icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-bs-theme="dark"] .topbar-search {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-bs-theme="dark"] .topbar-search input {
+  color: #e6ecf7;
+}
+
+.app-topbar .fw-semibold.text-dark {
+  color: #fff !important;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.75);
+}
+
+.app-topbar .ms-auto .text-muted {
+  color: #cbd6ea !important;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.75);
+}
+
+[data-bs-theme="dark"] .stat-card,
+[data-bs-theme="dark"] .app-card {
+  background-color: rgba(19, 31, 56, 0.55);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e6ecf7;
+}
+
+[data-bs-theme="dark"] .stat-card:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+}
+
+[data-bs-theme="dark"] .stat-card .stat-label,
+[data-bs-theme="dark"] .app-card .app-card-header {
+  color: #cbd5e1;
+}
+
+[data-bs-theme="dark"] .stat-card .stat-value {
+  color: #f8fafc;
+}
+
+[data-bs-theme="dark"] .table-modern thead th {
+  color: #8a94a6;
+}
+
+[data-bs-theme="dark"] .footer,
+[data-bs-theme="dark"] footer {
+  background-color: #0b1220;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html, body, .app-topbar, .app-content, .stat-card, .app-card, .theme-toggle-btn {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+.avatar-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.app-content {
+  position: relative;
+  padding: 1.25rem;
+  min-height: calc(100vh - var(--topbar-height));
+  background:
+    linear-gradient(180deg, rgba(240, 244, 250, 0.45) 0%, rgba(240, 244, 250, 0.62) 100%),
+    url('/images/hero-car.jpg') center 42% / cover fixed no-repeat;
+}
+
+.app-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1035;
+  display: none;
+}
+
+.app-backdrop.show {
+  display: block;
+}
+
+@media (min-width: 992px) {
+  .app-sidebar {
+    transform: translateX(0);
+  }
+
+  .app-main {
+    margin-left: var(--sidebar-width);
+  }
+
+  .app-backdrop {
+    display: none !important;
+  }
+}
+
+/* ================= Stat cards ================= */
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+  padding: 1.1rem;
+  height: 100%;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.stat-card:hover,
+.stat-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.12);
+  border-color: rgba(37, 99, 235, 0.3);
+  color: inherit;
+  text-decoration: none;
+}
+
+.stat-card .stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #fff;
+  margin-bottom: 0.6rem;
+}
+
+.stat-card .stat-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #172033;
+  line-height: 1.1;
+}
+
+.stat-card .stat-label {
+  font-size: 0.8rem;
+  color: #8a94a6;
+  margin-bottom: 0.15rem;
+}
+
+.stat-card .stat-trend {
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.stat-trend.up { color: #16a34a; }
+.stat-trend.down { color: #dc2626; }
+.stat-trend.flat { color: #8a94a6; }
+
+.bg-icon-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.bg-icon-green { background: linear-gradient(135deg, #22c55e, #15803d); }
+.bg-icon-red { background: linear-gradient(135deg, #f87171, #dc2626); }
+.bg-icon-amber { background: linear-gradient(135deg, #fbbf24, #d97706); }
+.bg-icon-purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+.bg-icon-teal { background: linear-gradient(135deg, #2dd4bf, #0d9488); }
+
+/* ================= Cards / tables / badges ================= */
+
+.app-card {
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.04);
+}
+
+.app-card .app-card-header {
+  padding: 1rem 1.1rem 0.25rem;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #172033;
+}
+
+.table-modern thead th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #8a94a6;
+  border-bottom-width: 1px;
+  font-weight: 600;
+}
+
+.table-modern td, .table-modern th {
+  vertical-align: middle;
+  padding: 0.7rem 0.85rem;
+}
+
+.activity-row {
+  cursor: pointer;
+}
+
+.activity-row:hover {
+  background-color: rgba(37, 99, 235, 0.08);
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 0.18rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.status-pill.completed { background: #dcfce7; color: #15803d; }
+.status-pill.reserved { background: #dbeafe; color: #1d4ed8; }
+.status-pill.pending { background: #fef3c7; color: #b45309; }
+.status-pill.cancelled { background: #f1f5f9; color: #64748b; }
+.status-pill.danger { background: #fee2e2; color: #b91c1c; }
+
+/* ================= Parking map widget ================= */
+
+.parking-map-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: #4b5668;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.map-area-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.map-area-tile {
+  display: block;
+  border-radius: 10px;
+  padding: 0.75rem;
+  background-color: #dcfce7;
+  border: 1px solid #86efac;
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.15s ease;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+a.map-area-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  text-decoration: none;
+  color: inherit;
+}
+
+.map-area-tile.occupied {
+  background-color: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.map-area-tile.vip {
+  box-shadow: 0 0 0 2px #f59e0b;
+}
+
+.map-area-tile .area-name {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.map-area-tile .area-status {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #15803d;
+}
+
+.map-area-tile.occupied .area-status {
+  color: #b91c1c;
+}
+
+.map-area-tile .area-cars {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.4rem 0;
+  font-size: 1.1rem;
+}
+
+.car-icon.available { color: #16a34a; }
+.car-icon.occupied { color: #dc2626; }
+
+.car-overflow {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.map-area-tile .area-count {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.map-area-tile .area-count small {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #64748b;
+}
+
+/* ================= Auth split-hero login ================= */
+
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  position: relative;
+  background-color: #0b1424;
+  overflow: hidden;
+}
+
+@media (min-width: 992px) {
+  .auth-shell {
+    background-image:
+      linear-gradient(90deg, rgba(4, 7, 14, 0.05) 0%, rgba(4, 7, 14, 0.28) 60%, rgba(4, 7, 14, 0.7) 85%, rgba(4, 7, 14, 0.85) 100%),
+      url('/images/parking-hero-skyline.jpg');
+    background-size: 190% auto;
+    background-position: 68% 12%;
+    background-repeat: no-repeat;
+    filter: brightness(1.35) contrast(1.08) saturate(1.25);
+  }
+
+  .auth-shell::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url('/images/hero-car-flipped.jpg');
+    background-size: cover;
+    background-position: center 35%;
+    background-repeat: no-repeat;
+    mask-image: linear-gradient(180deg, transparent 0%, transparent 42%, rgba(0, 0, 0, 0.85) 60%, black 78%, black 100%), linear-gradient(90deg, black 0%, black 65%, transparent 92%);
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, transparent 42%, rgba(0, 0, 0, 0.85) 60%, black 78%, black 100%), linear-gradient(90deg, black 0%, black 65%, transparent 92%);
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+.auth-hero {
+  position: relative;
+  z-index: 1;
+  flex: 1.15;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem 3.5rem;
+  color: #fff;
+  overflow: hidden;
+  background-image: linear-gradient(180deg, rgba(4, 7, 14, 0.22) 0%, rgba(4, 7, 14, 0.05) 30%, rgba(4, 7, 14, 0.05) 55%, rgba(4, 7, 14, 0.5) 100%);
+}
+
+.auth-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.9) 40%, transparent 90%);
+}
+
+.auth-hero .hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 992px) {
+  .auth-hero {
+    display: flex;
+  }
+}
+
+.auth-hero .brand-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.auth-hero .brand-row .brand-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.auth-hero h1 {
+  font-size: 2.6rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-top: 2.2rem;
+}
+
+.auth-hero h1 .accent {
+  color: #60a5fa;
+  display: block;
+  text-shadow: 0 0 24px rgba(96, 165, 250, 0.65);
+}
+
+.auth-hero p.lead {
+  color: #a9b6cc;
+  max-width: 32rem;
+  margin-top: 1rem;
+}
+
+.hero-feature-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+}
+
+.hero-feature-chip i {
+  font-size: 1.1rem;
+  color: #60a5fa;
+}
+
+.hero-footer-bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.25rem;
+}
+
+.hero-footer-bar .item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: #a9b6cc;
+}
+
+.hero-footer-bar .item i {
+  color: #60a5fa;
+  font-size: 1.1rem;
+}
+
+.hero-footer-bar .item strong {
+  display: block;
+  color: #fff;
+  font-size: 0.8rem;
+}
+
+.auth-panel {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem;
+  background-color: #0b1424;
+}
+
+@media (min-width: 992px) {
+  .auth-panel {
+    background: transparent;
+  }
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 380px;
+  background: rgba(19, 31, 56, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 26px;
+  padding: 2rem 1.9rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  color: #e6ecf7;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: authFadeInUp 0.5s ease-out;
+}
+
+.auth-card:hover {
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+}
+
+@keyframes authFadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-hero .hero-content > * {
+  animation: heroFadeIn 0.6s ease-out backwards;
+}
+
+.auth-hero .hero-content > *:nth-child(2) { animation-delay: 0.08s; }
+.auth-hero .hero-content > *:nth-child(3) { animation-delay: 0.16s; }
+.auth-hero .hero-content > *:nth-child(4) { animation-delay: 0.24s; }
+
+.auth-card .auth-icon {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.9rem;
+  color: #fff;
+  margin: 0 auto 1rem;
+  box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45);
+}
+
+.auth-card .auth-icon .auth-icon-letter {
+  position: absolute;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #1d4ed8;
+  line-height: 1;
+  margin-top: 3px;
+}
+
+.auth-card .auth-icon .auth-icon-badge {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #0e1830;
+  border: 2px solid #0b1424;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: #60a5fa;
+}
+
+.auth-card h4 {
+  color: #fff;
+  font-weight: 700;
+}
+
+.auth-card .text-muted-light {
+  color: #8b98b3;
+}
+
+.auth-card .form-label {
+  color: #b7c1d6;
+  font-size: 0.82rem;
+}
+
+.auth-input-group {
+  background: #0e1830;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+}
+
+.auth-input-group i {
+  color: #6b7994;
+}
+
+.auth-input-group input,
+.auth-input-group select {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e6ecf7;
+  padding: 0.65rem 0.6rem;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.auth-input-group input::placeholder {
+  color: #5c6a85;
+}
+
+.auth-input-group .toggle-visibility {
+  cursor: pointer;
+  color: #6b7994;
+}
+
+.btn-auth-primary {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.65rem;
+}
+
+.btn-auth-primary:hover {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #fff;
+}
+
+.btn-auth-outline {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e6ecf7;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.6rem;
+}
+
+.btn-auth-outline:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #5c6a85;
+  font-size: 0.78rem;
+  margin: 1rem 0;
+}
+
+.auth-divider::before, .auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.auth-card a {
+  color: #60a5fa;
+}

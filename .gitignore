@@ -1,0 +1,16 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+
+## Visual Studio
+.vs/
+*.userprefs
+
+## Rider / VS Code
+.idea/
+*.swp
+
+## Claude Code local state
+.claude/

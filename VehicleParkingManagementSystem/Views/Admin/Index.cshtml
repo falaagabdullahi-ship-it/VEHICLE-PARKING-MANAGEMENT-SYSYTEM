@@ -1,0 +1,15 @@
+@model VehicleParkingManagementSystem.Models.ViewModels.Dashboard.DashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    ViewBag.PageTitle = "Dashboard";
+    ViewBag.PageSubtitle = $"Welcome back, {User.Identity?.Name}";
+}
+
+<partial name="_OperationalDashboard" model="Model" />
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="~/js/parking-map.js" asp-append-version="true"></script>
+    <script src="~/js/dashboard-charts.js" asp-append-version="true"></script>
+    <script>renderOperationalDashboardCharts();</script>
+}

@@ -1,0 +1,70 @@
+@model List<VehicleParkingManagementSystem.Models.ViewModels.Dashboard.ParkingMapAreaViewModel>
+@{
+    const int MaxCarIcons = 6;
+}
+
+@functions {
+    private static string CarSvgMarkup(string statusClass)
+    {
+        return "<svg class=\"car-icon " + statusClass + "\" viewBox=\"0 0 24 42\" width=\"20\" height=\"35\" xmlns=\"http://www.w3.org/2000/svg\">"
+            + "<rect x=\"1\" y=\"9\" width=\"4\" height=\"8\" rx=\"1.5\" fill=\"#475569\" />"
+            + "<rect x=\"19\" y=\"9\" width=\"4\" height=\"8\" rx=\"1.5\" fill=\"#475569\" />"
+            + "<rect x=\"1\" y=\"25\" width=\"4\" height=\"8\" rx=\"1.5\" fill=\"#475569\" />"
+            + "<rect x=\"19\" y=\"25\" width=\"4\" height=\"8\" rx=\"1.5\" fill=\"#475569\" />"
+            + "<rect x=\"3\" y=\"1\" width=\"18\" height=\"40\" rx=\"7\" fill=\"currentColor\" />"
+            + "<rect x=\"6\" y=\"5\" width=\"12\" height=\"9\" rx=\"2\" fill=\"#0f172a\" opacity=\"0.45\" />"
+            + "<rect x=\"6\" y=\"26\" width=\"12\" height=\"8\" rx=\"2\" fill=\"#0f172a\" opacity=\"0.3\" />"
+            + "</svg>";
+    }
+
+    private static string CarsMarkup(int activeCount, int maxCarIcons)
+    {
+        if (activeCount == 0) return CarSvgMarkup("available");
+
+        var shown = Math.Min(activeCount, maxCarIcons);
+        var html = string.Concat(Enumerable.Repeat(0, shown).Select(_ => CarSvgMarkup("occupied")));
+        if (activeCount > maxCarIcons) html += $"<span class=\"car-overflow\">+{activeCount - maxCarIcons}</span>";
+        return html;
+    }
+}
+
+<div class="app-card h-100">
+    <div class="d-flex justify-content-between align-items-center app-card-header pb-2">
+        <span>Real-Time Parking Map</span>
+        <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" id="liveUpdateToggle" checked>
+            <label class="form-check-label small text-muted" for="liveUpdateToggle">Live Update</label>
+        </div>
+    </div>
+    <div class="p-3">
+        <div class="map-area-grid" id="parkingMapGrid">
+            @foreach (var area in Model)
+            {
+                var tileClass = "map-area-tile " + (area.ActiveCount > 0 ? "occupied " : "") + (area.IsVip ? "vip" : "");
+
+                if (area.AreaId.HasValue)
+                {
+                    <a asp-controller="ParkingAreas" asp-action="Details" asp-route-id="@area.AreaId" class="@tileClass" data-area-id="@area.AreaId">
+                        <div class="area-name">@area.AreaName @if (area.IsVip) { <span class="badge bg-warning text-dark">VIP</span> }</div>
+                        <div class="area-status">@(area.ActiveCount > 0 ? "Occupied" : "Available")</div>
+                        <div class="area-cars">@Html.Raw(CarsMarkup(area.ActiveCount, MaxCarIcons))</div>
+                        <div class="area-count">@area.ActiveCount <small>parked</small></div>
+                    </a>
+                }
+                else
+                {
+                    <div class="@tileClass" data-area-id="">
+                        <div class="area-name">@area.AreaName</div>
+                        <div class="area-status">@(area.ActiveCount > 0 ? "Occupied" : "Available")</div>
+                        <div class="area-cars">@Html.Raw(CarsMarkup(area.ActiveCount, MaxCarIcons))</div>
+                        <div class="area-count">@area.ActiveCount <small>parked</small></div>
+                    </div>
+                }
+            }
+        </div>
+        @if (!Model.Any())
+        {
+            <div class="text-center text-muted py-4">No parking areas configured yet.</div>
+        }
+    </div>
+</div>

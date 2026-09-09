@@ -1,0 +1,51 @@
+@model VehicleParkingManagementSystem.Models.ViewModels.Account.LoginViewModel
+
+<div class="auth-card">
+    <div class="auth-icon">
+        <i class="bi bi-shield-fill"></i>
+        <span class="auth-icon-letter">P</span>
+        <span class="auth-icon-badge"><i class="bi bi-car-front-fill"></i></span>
+    </div>
+    <h4 class="text-center mb-1">Welcome Back</h4>
+    <p class="text-center text-muted-light small mb-4">Sign in to your account</p>
+
+    <form asp-controller="Account" asp-action="Login" method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label">Username</label>
+            <div class="auth-input-group">
+                <i class="bi bi-person"></i>
+                <input asp-for="Email" placeholder="Username" autocomplete="username" autofocus />
+            </div>
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Password" class="form-label">Password</label>
+            <div class="auth-input-group">
+                <i class="bi bi-lock"></i>
+                <input asp-for="Password" type="password" id="passwordInput" placeholder="Enter your password" autocomplete="current-password" />
+                <i class="bi bi-eye toggle-visibility" id="togglePassword"></i>
+            </div>
+            <span asp-validation-for="Password" class="text-danger small"></span>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label small text-muted-light"></label>
+            </div>
+            <a asp-controller="Account" asp-action="ForgotPassword" class="small">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-auth-primary w-100">Sign In</button>
+
+        <div class="auth-divider">Or</div>
+
+        <a asp-controller="Account" asp-action="Register" class="btn btn-auth-outline w-100">
+            <i class="bi bi-person-plus"></i> Create New Account
+        </a>
+    </form>
+</div>

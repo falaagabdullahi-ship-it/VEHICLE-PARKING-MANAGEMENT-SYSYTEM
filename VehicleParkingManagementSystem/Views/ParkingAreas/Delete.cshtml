@@ -1,0 +1,21 @@
+﻿@model VehicleParkingManagementSystem.Models.ParkingArea
+@{
+    ViewData["Title"] = "Delete Parking Area";
+}
+
+<h3 class="mb-3">Delete Parking Area</h3>
+
+<div class="app-card border-danger" style="max-width: 600px;">
+    <div class="card-body">
+        <p>Are you sure you want to delete <strong>@Model.Name</strong>?</p>
+        <div class="alert alert-warning mb-0">
+            This will fail if this area has parking or reservation history.
+        </div>
+    </div>
+    <div class="card-footer">
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Cancel</a>
+        </form>
+    </div>
+</div>

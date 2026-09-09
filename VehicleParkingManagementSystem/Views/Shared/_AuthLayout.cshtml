@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - VehicleParkingManagementSystem</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="auth-shell">
+        <div class="auth-hero">
+            <div class="hero-content">
+                <div class="brand-row">
+                    <div class="brand-icon"><i class="bi bi-p-square-fill"></i></div>
+                    <div>
+                        <div class="fw-bold fs-5">Parking Pro</div>
+                        <div class="text-primary-emphasis small" style="color:#60a5fa;">Smart Parking Solutions</div>
+                    </div>
+                </div>
+
+                <h1>Smart Parking<span class="accent">Better Tomorrow</span></h1>
+                <p class="lead">A modern solution for efficient vehicle parking management, real-time monitoring, and seamless operations.</p>
+
+                <div class="row g-2 mt-3" style="max-width: 34rem;">
+                    <div class="col-4">
+                        <div class="hero-feature-chip"><i class="bi bi-shield-check"></i> <span>Secure &amp; Reliable</span></div>
+                    </div>
+                    <div class="col-4">
+                        <div class="hero-feature-chip"><i class="bi bi-clock-history"></i> <span>Real-time Monitoring</span></div>
+                    </div>
+                    <div class="col-4">
+                        <div class="hero-feature-chip"><i class="bi bi-bar-chart-line"></i> <span>Smart Analytics</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-footer-bar">
+                <div class="item"><i class="bi bi-key"></i> <span><strong>Efficient Parking</strong>Better Management</span></div>
+                <div class="item"><i class="bi bi-graph-up-arrow"></i> <span><strong>Real-time Insights</strong>Smarter Decisions</span></div>
+                <div class="item"><i class="bi bi-shield-lock"></i> <span><strong>Secure &amp; Safe</strong>Your Data, Our Priority</span></div>
+                <div class="item"><i class="bi bi-award"></i> <span><strong>Driving a Better</strong>Tomorrow</span></div>
+            </div>
+        </div>
+
+        <div class="auth-panel">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,141 @@
+﻿@model VehicleParkingManagementSystem.Models.ViewModels.Dashboard.DashboardViewModel
+
+@{
+    string TrendClass(double? pct) => pct is null or 0 ? "flat" : pct > 0 ? "up" : "down";
+    string TrendIcon(double? pct) => pct is null or 0 ? "bi-dash" : pct > 0 ? "bi-arrow-up" : "bi-arrow-down";
+    string TrendText(double? pct, string suffix) => pct is null ? suffix : $"{(pct > 0 ? "+" : "")}{pct:0}% {suffix}";
+    var monthStart = DateTime.UtcNow.Date.AddDays(1 - DateTime.UtcNow.Day).ToString("yyyy-MM-dd");
+    var today = DateTime.UtcNow.Date.ToString("yyyy-MM-dd");
+}
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-4 col-xl">
+        <a class="stat-card" asp-controller="ParkingOperations" asp-action="Index">
+            <div class="stat-icon bg-icon-red"><i class="bi bi-car-front-fill"></i></div>
+            <div class="stat-label">Currently Parked</div>
+            <div class="stat-value">@Model.ActiveSessions</div>
+            <div class="stat-trend flat">Active Sessions</div>
+        </a>
+    </div>
+    <div class="col-6 col-md-4 col-xl">
+        <a class="stat-card" asp-controller="ParkingOperations" asp-action="History" asp-route-date="@today" asp-route-mode="entered">
+            <div class="stat-icon bg-icon-purple"><i class="bi bi-box-arrow-in-right"></i></div>
+            <div class="stat-label">Vehicles Entered</div>
+            <div class="stat-value">@Model.VehiclesToday</div>
+            <div class="stat-trend @TrendClass(Model.VehiclesTodayTrendPct)"><i class="bi @TrendIcon(Model.VehiclesTodayTrendPct)"></i> @TrendText(Model.VehiclesTodayTrendPct, "vs Yesterday")</div>
+        </a>
+    </div>
+    <div class="col-6 col-md-4 col-xl">
+        <a class="stat-card" asp-controller="ParkingOperations" asp-action="History" asp-route-date="@today" asp-route-mode="exited">
+            <div class="stat-icon bg-icon-green"><i class="bi bi-box-arrow-right"></i></div>
+            <div class="stat-label">Vehicles Exited</div>
+            <div class="stat-value">@Model.VehiclesExitedToday</div>
+            <div class="stat-trend @TrendClass(Model.VehiclesExitedTodayTrendPct)"><i class="bi @TrendIcon(Model.VehiclesExitedTodayTrendPct)"></i> @TrendText(Model.VehiclesExitedTodayTrendPct, "vs Yesterday")</div>
+        </a>
+    </div>
+    <div class="col-6 col-md-4 col-xl">
+        <a class="stat-card" asp-controller="Vehicles" asp-action="Index">
+            <div class="stat-icon bg-icon-blue"><i class="bi bi-car-front"></i></div>
+            <div class="stat-label">Registered Vehicles</div>
+            <div class="stat-value">@Model.TotalRegisteredVehicles</div>
+            <div class="stat-trend flat">All Time</div>
+        </a>
+    </div>
+    <div class="col-6 col-md-4 col-xl">
+        <a class="stat-card" asp-controller="Reports" asp-action="ParkingActivity" asp-route-from="@monthStart" asp-route-to="@today">
+            <div class="stat-icon bg-icon-teal"><i class="bi bi-cash-stack"></i></div>
+            <div class="stat-label">Monthly Revenue</div>
+            <div class="stat-value">@Model.MonthRevenue.ToString("C0")</div>
+            <div class="stat-trend @TrendClass(Model.RevenueTrendPct)"><i class="bi @TrendIcon(Model.RevenueTrendPct)"></i> @TrendText(Model.RevenueTrendPct, "vs Last Month")</div>
+        </a>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-4">
+        <div class="app-card h-100">
+            <div class="app-card-header">Vehicles Checked In (Last 7 Days)</div>
+            <div class="p-3"><canvas id="occupancyTrendChart" height="200"></canvas></div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="app-card h-100">
+            <div class="app-card-header">Vehicles by Type</div>
+            <div class="p-3 d-flex align-items-center gap-3">
+                <canvas id="vehicleTypeChart" height="180"></canvas>
+                <div id="vehicleTypeLegend" class="small flex-shrink-0"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="app-card h-100">
+            <div class="app-card-header">Revenue (Last 7 Days)</div>
+            <div class="p-3"><canvas id="weeklyRevenueChart" height="200"></canvas></div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-8">
+        <partial name="_ParkingMap" model="Model.ParkingMap" />
+    </div>
+    <div class="col-lg-4">
+        <div class="app-card h-100">
+            <div class="d-flex justify-content-between align-items-center app-card-header pb-2">
+                <span>Recent Activities</span>
+                <a asp-controller="ParkingOperations" asp-action="Index" class="small">View All <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="table-responsive" style="max-height: 360px;">
+                <table class="table table-modern table-sm mb-0">
+                    <tbody>
+                        @foreach (var activity in Model.RecentActivities)
+                        {
+                            var pillClass = activity.Status == "Reserved" ? "reserved" : "completed";
+                            var href = activity.Kind switch
+                            {
+                                "CheckOut" => Url.Action("Receipt", "ParkingOperations", new { id = activity.RecordId }),
+                                "Reservation" => Url.Action("Details", "Reservations", new { id = activity.RecordId }),
+                                _ => Url.Action("History", "ParkingOperations", new { date = activity.Timestamp.ToString("yyyy-MM-dd"), search = activity.VehicleNumber })
+                            };
+                            <tr class="activity-row" data-href="@href">
+                                <td>
+                                    <div class="fw-semibold small"><i class="bi @activity.Icon me-1 text-primary"></i>@activity.ActivityLabel</div>
+                                    <div class="text-muted" style="font-size: 0.72rem;">@activity.VehicleNumber &middot; @activity.Location</div>
+                                    <div class="text-muted" style="font-size: 0.68rem;">@activity.Timestamp.ToLocalTime().ToString("d MMM, HH:mm")</div>
+                                </td>
+                                <td class="text-end"><span class="status-pill @pillClass">@activity.Status</span></td>
+                            </tr>
+                        }
+                        @if (!Model.RecentActivities.Any())
+                        {
+                            <tr><td class="text-center text-muted py-4">No recent activity.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.activity-row[data-href]').forEach(function (row) {
+        row.addEventListener('click', function () {
+            window.location.href = row.dataset.href;
+        });
+    });
+</script>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="app-card h-100">
+            <div class="app-card-header">Monthly Revenue (6 Months)</div>
+            <div class="p-3"><canvas id="monthlyRevenueChart" height="200"></canvas></div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="app-card h-100">
+            <div class="app-card-header">Peak Parking Hours</div>
+            <div class="p-3"><canvas id="peakHoursChart" height="200"></canvas></div>
+        </div>
+    </div>
+</div>

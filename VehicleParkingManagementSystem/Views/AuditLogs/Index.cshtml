@@ -1,0 +1,74 @@
+﻿@model VehicleParkingManagementSystem.Models.ViewModels.PagedResult<VehicleParkingManagementSystem.Models.AuditLog>
+@{
+    ViewData["Title"] = "Audit Logs";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Audit Logs</h3>
+    <a asp-action="ExportExcel" asp-route-action="@ViewBag.Action" asp-route-entityName="@ViewBag.EntityName" class="btn btn-outline-success"><i class="bi bi-file-earmark-excel"></i> Export to Excel</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">
+        <select name="action" class="form-select">
+            <option value="">All Actions</option>
+            @foreach (var a in (List<string>)ViewBag.Actions)
+            {
+                <option value="@a" selected="@(a == (string)ViewBag.Action)">@a</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="entityName" class="form-select">
+            <option value="">All Entities</option>
+            @foreach (var e in (List<string>)ViewBag.Entities)
+            {
+                <option value="@e" selected="@(e == (string)ViewBag.EntityName)">@e</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-secondary w-100"><i class="bi bi-filter"></i> Filter</button>
+    </div>
+</form>
+
+<div class="app-card">
+    <div class="table-responsive">
+        <table class="table table-modern table-hover mb-0 align-middle">
+            <thead>
+                <tr><th>Timestamp</th><th>User</th><th>Action</th><th>Entity</th><th>Details</th><th>IP</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model.Items)
+                {
+                    <tr>
+                        <td>@log.Timestamp.ToLocalTime().ToString("d MMM yyyy, HH:mm:ss")</td>
+                        <td>@(log.User?.Email ?? "System")</td>
+                        <td><span class="badge bg-secondary">@log.Action</span></td>
+                        <td>@log.EntityName @(log.EntityId is not null ? $"#{log.EntityId}" : "")</td>
+                        <td class="small text-muted">@log.Details</td>
+                        <td class="small text-muted">@log.IpAddress</td>
+                    </tr>
+                }
+                @if (!Model.Items.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">No audit entries found.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-action="@ViewBag.Action" asp-route-entityName="@ViewBag.EntityName">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

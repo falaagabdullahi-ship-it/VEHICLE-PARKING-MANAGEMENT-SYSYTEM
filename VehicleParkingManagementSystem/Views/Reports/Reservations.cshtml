@@ -1,0 +1,63 @@
+﻿@model List<VehicleParkingManagementSystem.Models.ViewModels.Reports.ReservationReportRow>
+@{
+    ViewData["Title"] = "Reservation Report";
+}
+
+<h3 class="mb-3">Reservation Report</h3>
+
+<form method="get" class="row g-2 mb-3 align-items-end">
+    <div class="col-md-3">
+        <label class="form-label small">From</label>
+        <input type="date" name="from" value="@ViewBag.From" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label small">To</label>
+        <input type="date" name="to" value="@ViewBag.To" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label small">Status</label>
+        <select name="status" asp-items="Html.GetEnumSelectList<VehicleParkingManagementSystem.Models.ReservationStatus>()" class="form-select">
+            <option value="">All</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-outline-secondary w-100"><i class="bi bi-filter"></i> Filter</button>
+    </div>
+</form>
+
+<div class="mb-3 no-print">
+    <a asp-action="ReservationsExportPdf" asp-route-from="@ViewBag.From" asp-route-to="@ViewBag.To" asp-route-status="@ViewBag.Status" class="btn btn-danger btn-sm">
+        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+    </a>
+    <a asp-action="ReservationsExportExcel" asp-route-from="@ViewBag.From" asp-route-to="@ViewBag.To" asp-route-status="@ViewBag.Status" class="btn btn-success btn-sm">
+        <i class="bi bi-file-earmark-excel"></i> Export Excel
+    </a>
+</div>
+
+<div class="app-card">
+    <div class="table-responsive">
+        <table class="table table-modern table-hover mb-0 align-middle">
+            <thead>
+                <tr><th>Vehicle</th><th>Area</th><th>From</th><th>To</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model)
+                {
+                    <tr>
+                        <td>@row.VehicleNumber</td>
+                        <td>@row.ParkingArea</td>
+                        <td>@row.ReservedFrom.ToLocalTime().ToString("d MMM, HH:mm")</td>
+                        <td>@row.ReservedTo.ToLocalTime().ToString("d MMM, HH:mm")</td>
+                        <td>@row.Status</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="5" class="text-center text-muted py-4">No reservations found for the selected filters.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-outline-secondary mt-3">Back to Reports</a>

@@ -1,0 +1,81 @@
+@model VehicleParkingManagementSystem.Models.ViewModels.Account.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+    Layout = "_AuthLayout";
+}
+
+<div class="auth-card" style="max-width: 460px;">
+    <div class="auth-icon"><i class="bi bi-person-plus-fill"></i></div>
+    <h4 class="text-center mb-1">Driver Registration</h4>
+    <p class="text-center text-muted-light small mb-4">Create your account to reserve and pay for parking</p>
+
+    <form asp-controller="Account" asp-action="Register" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="FirstName" class="form-label"></label>
+                <div class="auth-input-group">
+                    <i class="bi bi-person"></i>
+                    <input asp-for="FirstName" autofocus />
+                </div>
+                <span asp-validation-for="FirstName" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="LastName" class="form-label"></label>
+                <div class="auth-input-group">
+                    <i class="bi bi-person"></i>
+                    <input asp-for="LastName" />
+                </div>
+                <span asp-validation-for="LastName" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <div class="auth-input-group">
+                <i class="bi bi-envelope"></i>
+                <input asp-for="Email" autocomplete="username" />
+            </div>
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <div class="auth-input-group">
+                <i class="bi bi-telephone"></i>
+                <input asp-for="PhoneNumber" />
+            </div>
+            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <div class="auth-input-group">
+                    <i class="bi bi-lock"></i>
+                    <input asp-for="Password" type="password" autocomplete="new-password" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <div class="auth-input-group">
+                    <i class="bi bi-lock"></i>
+                    <input asp-for="ConfirmPassword" type="password" autocomplete="new-password" />
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-auth-primary w-100">Create Account</button>
+
+        <div class="text-center mt-3 small text-muted-light">
+            Already have an account? <a asp-controller="Account" asp-action="Login">Sign in</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

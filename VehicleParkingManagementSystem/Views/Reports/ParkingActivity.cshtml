@@ -1,0 +1,70 @@
+﻿@model List<VehicleParkingManagementSystem.Models.ViewModels.Reports.ParkingActivityReportRow>
+@{
+    ViewData["Title"] = "Parking Activity Report";
+}
+
+<h3 class="mb-3">Parking Activity Report</h3>
+
+<form method="get" class="row g-2 mb-3 align-items-end">
+    <div class="col-md-2">
+        <label class="form-label small">From</label>
+        <input type="date" name="from" value="@ViewBag.From" class="form-control" />
+    </div>
+    <div class="col-md-2">
+        <label class="form-label small">To</label>
+        <input type="date" name="to" value="@ViewBag.To" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <label class="form-label small">Parking Area</label>
+        <select name="parkingAreaId" asp-items="ViewBag.AreaOptions as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>" class="form-select">
+            <option value="">All Areas</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label small">Vehicle Number</label>
+        <input type="text" name="vehicleNumber" value="@ViewBag.VehicleNumber" class="form-control" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-outline-secondary w-100"><i class="bi bi-filter"></i> Filter</button>
+    </div>
+</form>
+
+<div class="mb-3 no-print">
+    <a asp-action="ParkingActivityExportPdf" asp-route-from="@ViewBag.From" asp-route-to="@ViewBag.To" asp-route-parkingAreaId="@Context.Request.Query["parkingAreaId"]" asp-route-vehicleNumber="@ViewBag.VehicleNumber" class="btn btn-danger btn-sm">
+        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+    </a>
+    <a asp-action="ParkingActivityExportExcel" asp-route-from="@ViewBag.From" asp-route-to="@ViewBag.To" asp-route-parkingAreaId="@Context.Request.Query["parkingAreaId"]" asp-route-vehicleNumber="@ViewBag.VehicleNumber" class="btn btn-success btn-sm">
+        <i class="bi bi-file-earmark-excel"></i> Export Excel
+    </a>
+</div>
+
+<div class="app-card">
+    <div class="table-responsive">
+        <table class="table table-modern table-hover mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Vehicle</th><th>Owner</th><th>Area</th><th>Check-In</th><th>Check-Out</th><th>Fee</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model)
+                {
+                    <tr>
+                        <td>@row.VehicleNumber</td>
+                        <td>@row.OwnerName</td>
+                        <td>@row.ParkingArea</td>
+                        <td>@row.CheckInTime.ToLocalTime().ToString("d MMM, HH:mm")</td>
+                        <td>@(row.CheckOutTime?.ToLocalTime().ToString("d MMM, HH:mm") ?? "-")</td>
+                        <td>@(row.Fee?.ToString("C") ?? "-")</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-4">No records found for the selected filters.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a asp-action="Index" class="btn btn-outline-secondary mt-3">Back to Reports</a>

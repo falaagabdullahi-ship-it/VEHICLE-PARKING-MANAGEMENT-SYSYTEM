@@ -1,0 +1,145 @@
+@model VehicleParkingManagementSystem.Models.ViewModels.Settings.SettingsViewModel
+@{
+    ViewData["Title"] = "System Settings";
+}
+
+<h3 class="mb-3">System Settings</h3>
+
+@if (TempData["StatusMessage"] is not null)
+{
+    <div class="alert alert-success">@TempData["StatusMessage"]</div>
+}
+
+<div class="app-card mb-4" style="max-width: 700px;">
+    <div class="card-header">
+        <strong>Parking Fee Rates</strong>
+        <div class="text-muted small">Hourly rate and minimum charge applied per vehicle type at check-out (used only for metered/reservation sessions).</div>
+    </div>
+    <div class="card-body">
+        <form asp-action="UpdatePricing" method="post">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr><th>Vehicle Type</th><th>Hourly Rate</th><th>Minimum Charge</th></tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.PricingRows.Count; i++)
+                    {
+                        var row = Model.PricingRows[i];
+                        <tr>
+                            <td>
+                                @row.VehicleType
+                                <input type="hidden" name="[@i].Id" value="@row.Id" />
+                                <input type="hidden" name="[@i].VehicleType" value="@row.VehicleType" />
+                            </td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">$</span>
+                                    <input name="[@i].HourlyRate" value="@row.HourlyRate" class="form-control" step="0.01" min="0" />
+                                </div>
+                            </td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">$</span>
+                                    <input name="[@i].MinimumCharge" value="@row.MinimumCharge" class="form-control" step="0.01" min="0" />
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary mt-2">Save Pricing</button>
+        </form>
+    </div>
+</div>
+
+<div class="app-card mb-4" style="max-width: 900px;">
+    <div class="card-header">
+        <strong>Parking Packages</strong>
+        <div class="text-muted small">Prepaid packages officers offer at check-in. Fee is charged up front and the vehicle is checked out automatically once the duration elapses.</div>
+    </div>
+    <div class="card-body">
+        <form asp-action="UpdatePackages" method="post">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr><th>Vehicle Type</th><th>Name</th><th>Duration (hours)</th><th>Price</th><th>Active</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.Packages.Count; i++)
+                    {
+                        var row = Model.Packages[i];
+                        <tr>
+                            <td>
+                                @row.VehicleType
+                                <input type="hidden" name="[@i].Id" value="@row.Id" />
+                                <input type="hidden" name="[@i].VehicleType" value="@row.VehicleType" />
+                                <input type="hidden" name="[@i].Name" value="@row.Name" />
+                            </td>
+                            <td>@row.Name</td>
+                            <td>
+                                <input name="[@i].DurationHours" value="@row.DurationHours" class="form-control form-control-sm" type="number" step="0.25" min="0.25" style="max-width: 100px;" />
+                            </td>
+                            <td>
+                                <div class="input-group input-group-sm" style="max-width: 140px;">
+                                    <span class="input-group-text">$</span>
+                                    <input name="[@i].Price" value="@row.Price" class="form-control" step="0.01" min="0" />
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <input type="hidden" name="[@i].IsActive" value="false" />
+                                <input type="checkbox" name="[@i].IsActive" value="true" class="form-check-input" checked="@row.IsActive" />
+                            </td>
+                            <td class="text-end">
+                                <button type="submit" form="deletePackage-@row.Id" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Packages.Any())
+                    {
+                        <tr><td colspan="6" class="text-center text-muted py-3">No parking packages configured yet.</td></tr>
+                    }
+                </tbody>
+            </table>
+            <button type="submit" class="btn btn-primary mt-2">Save Packages</button>
+        </form>
+
+        @foreach (var row in Model.Packages)
+        {
+            <form id="deletePackage-@row.Id" asp-action="DeletePackage" method="post" class="d-none">
+                <input type="hidden" name="id" value="@row.Id" />
+            </form>
+        }
+
+        <hr class="my-3" />
+
+        <h6>Add Package</h6>
+        <form asp-action="CreatePackage" method="post" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Vehicle Type</label>
+                <select name="VehicleType" class="form-select form-select-sm">
+                    @foreach (var type in Enum.GetValues<VehicleParkingManagementSystem.Models.VehicleType>())
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Name</label>
+                <input name="Name" class="form-control form-control-sm" placeholder="e.g. 2 Hour" required />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Duration (hours)</label>
+                <input name="DurationHours" type="number" step="0.25" min="0.25" value="1" class="form-control form-control-sm" required />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Price</label>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">$</span>
+                    <input name="Price" type="number" step="0.01" min="0" class="form-control" required />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-plus-lg"></i> Add</button>
+            </div>
+        </form>
+    </div>
+</div>

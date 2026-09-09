@@ -1,0 +1,40 @@
+﻿@model VehicleParkingManagementSystem.Models.Vehicle
+@{
+    ViewData["Title"] = "Vehicle Details";
+}
+
+<h3 class="mb-3">Vehicle Details</h3>
+
+<div class="app-card" style="max-width: 600px;">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-4">Vehicle Number</dt>
+            <dd class="col-sm-8">@Model.VehicleNumber</dd>
+
+            <dt class="col-sm-4">Owner</dt>
+            <dd class="col-sm-8">@Model.OwnerName</dd>
+
+            <dt class="col-sm-4">Phone</dt>
+            <dd class="col-sm-8">@Model.PhoneNumber</dd>
+
+            <dt class="col-sm-4">Driver</dt>
+            <dd class="col-sm-8">@(Model.Driver?.FullName ?? "-")</dd>
+
+            <dt class="col-sm-4">Vehicle Type</dt>
+            <dd class="col-sm-8">@Model.VehicleType</dd>
+
+            <dt class="col-sm-4">Model</dt>
+            <dd class="col-sm-8">@Model.VehicleModel</dd>
+
+            <dt class="col-sm-4">Color</dt>
+            <dd class="col-sm-8">@Model.Color</dd>
+
+            <dt class="col-sm-4">Registration Date</dt>
+            <dd class="col-sm-8">@Model.RegistrationDate.ToString("d MMM yyyy")</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">Edit</a>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm">Back to List</a>
+    </div>
+</div>
