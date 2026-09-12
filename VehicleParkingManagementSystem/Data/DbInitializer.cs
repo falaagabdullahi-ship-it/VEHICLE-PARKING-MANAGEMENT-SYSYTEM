@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using VehicleParkingManagementSystem.Models;
 
 namespace VehicleParkingManagementSystem.Data;
@@ -10,6 +11,8 @@ public static class DbInitializer
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var db = services.GetRequiredService<AppDbContext>();
+
+        await db.Database.MigrateAsync();
 
         foreach (var role in AppRoles.All)
         {
