@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using VehicleParkingManagementSystem.Data;
 using VehicleParkingManagementSystem.Models;
 using VehicleParkingManagementSystem.Repositories;
@@ -32,7 +33,10 @@ if (!string.IsNullOrEmpty(connectionString) &&
 }
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(connectionString));
+{
+    options.UseNpgsql(connectionString);
+    options.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
+});
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
