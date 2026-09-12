@@ -7,6 +7,8 @@ using VehicleParkingManagementSystem.Repositories.Interfaces;
 using VehicleParkingManagementSystem.Services;
 using VehicleParkingManagementSystem.Services.Interfaces;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
