@@ -321,21 +321,25 @@ public class AccountController : Controller
             return RedirectToAction(nameof(Profile));
         }
 
-        var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "profiles");
-        Directory.CreateDirectory(uploadsFolder);
-
         DeleteExistingProfilePicture(user);
 
-        var extension = Path.GetExtension(file.FileName);
-        var fileName = $"{user.Id}-{Guid.NewGuid():N}{extension}";
-        var filePath = Path.Combine(uploadsFolder, fileName);
+        // Stored in the database rather than on disk: the hosting disk is wiped on every redeploy.
+        using var buffer = new MemoryStream();
+        await file.CopyToAsync(buffer);
 
-        await using (var stream = new FileStream(filePath, FileMode.Create))
+        var picture = await _db.ProfilePictures.FindAsync(user.Id);
+        if (picture is null)
         {
-            await file.CopyToAsync(stream);
+            picture = new ProfilePicture { UserId = user.Id };
+            _db.ProfilePictures.Add(picture);
         }
+        picture.Data = buffer.ToArray();
+        picture.ContentType = file.ContentType;
+        picture.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
 
-        user.ProfilePicturePath = $"/uploads/profiles/{fileName}";
+        // The version query string makes browsers fetch the new image instead of a cached old one.
+        user.ProfilePicturePath = $"/Account/ProfilePicture?v={Guid.NewGuid():N}";
         await _userManager.UpdateAsync(user);
         await _auditService.LogAsync(user.Id, "Update", "ProfilePicture", user.Id);
 
@@ -352,6 +356,12 @@ public class AccountController : Controller
         if (user is null) return RedirectToAction(nameof(Login));
 
         DeleteExistingProfilePicture(user);
+        var picture = await _db.ProfilePictures.FindAsync(user.Id);
+        if (picture is not null)
+        {
+            _db.ProfilePictures.Remove(picture);
+            await _db.SaveChangesAsync();
+        }
         user.ProfilePicturePath = null;
         await _userManager.UpdateAsync(user);
         await _auditService.LogAsync(user.Id, "Delete", "ProfilePicture", user.Id);
@@ -360,9 +370,22 @@ public class AccountController : Controller
         return RedirectToAction(nameof(Profile));
     }
 
+    [Authorize]
+    [HttpGet]
+    [ResponseCache(Duration = 31536000, Location = ResponseCacheLocation.Client)]
+    public async Task<IActionResult> ProfilePicture()
+    {
+        var userId = _userManager.GetUserId(User);
+        var picture = await _db.ProfilePictures.FindAsync(userId);
+        if (picture is null) return NotFound();
+
+        return File(picture.Data, picture.ContentType);
+    }
+
+    /// <summary>Removes a picture saved by the older disk-based upload, if one is still on disk.</summary>
     private void DeleteExistingProfilePicture(ApplicationUser user)
     {
-        if (string.IsNullOrEmpty(user.ProfilePicturePath)) return;
+        if (string.IsNullOrEmpty(user.ProfilePicturePath) || !user.ProfilePicturePath.StartsWith("/uploads/")) return;
 
         var existingPath = Path.Combine(_webHostEnvironment.WebRootPath, user.ProfilePicturePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
         if (System.IO.File.Exists(existingPath))

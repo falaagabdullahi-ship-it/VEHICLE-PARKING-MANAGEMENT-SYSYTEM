@@ -20,6 +20,7 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole, str
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<PricingSetting> PricingSettings => Set<PricingSetting>();
     public DbSet<ParkingPackage> ParkingPackages => Set<ParkingPackage>();
+    public DbSet<ProfilePicture> ProfilePictures => Set<ProfilePicture>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -130,6 +131,17 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole, str
         builder.Entity<ParkingPackage>(entity =>
         {
             entity.Property(p => p.Price).HasColumnType("decimal(10,2)");
+        });
+
+        // ProfilePicture
+        builder.Entity<ProfilePicture>(entity =>
+        {
+            entity.HasKey(p => p.UserId);
+            entity.Property(p => p.ContentType).HasMaxLength(50);
+            entity.HasOne(p => p.User)
+                .WithOne()
+                .HasForeignKey<ProfilePicture>(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
