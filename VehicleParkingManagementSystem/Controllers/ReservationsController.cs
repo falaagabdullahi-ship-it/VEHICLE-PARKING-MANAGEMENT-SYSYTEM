@@ -145,6 +145,30 @@ public class ReservationsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.ParkingOfficer}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var reservation = await _reservationService.GetDetailsAsync(id);
+        if (reservation is null) return NotFound();
+        return View(reservation);
+    }
+
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.ParkingOfficer}")]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var reservation = await _reservationService.GetDetailsAsync(id);
+        var result = await _reservationService.DeleteAsync(id);
+        if (result.Succeeded)
+        {
+            var details = reservation?.Vehicle is null ? null : reservation.Vehicle.VehicleNumber;
+            await _auditService.LogAsync(_userManager.GetUserId(User), "Delete", "Reservation", id.ToString(), details: details);
+        }
+        TempData["StatusMessage"] = result.Succeeded ? "Reservation deleted successfully." : result.Error;
+        return RedirectToAction(nameof(Index));
+    }
+
     private async Task<bool> IsOwnVehicleAsync(int vehicleId)
     {
         var userId = _userManager.GetUserId(User);

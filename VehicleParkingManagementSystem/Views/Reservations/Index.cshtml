@@ -57,6 +57,10 @@
                         <td><span class="status-pill @badgeClass">@reservation.Status</span></td>
                         <td class="text-end">
                             <a asp-action="Details" asp-route-id="@reservation.Id" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>
+                            @if (User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.ParkingOfficer))
+                            {
+                                <a asp-action="Delete" asp-route-id="@reservation.Id" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+                            }
                         </td>
                     </tr>
                 }

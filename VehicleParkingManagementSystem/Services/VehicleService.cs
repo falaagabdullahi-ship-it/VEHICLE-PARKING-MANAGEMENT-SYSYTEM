@@ -11,11 +11,19 @@ public class VehicleService : IVehicleService
 {
     private readonly IVehicleRepository _vehicles;
     private readonly IDriverRepository _drivers;
+    private readonly IParkingRecordRepository _parkingRecords;
+    private readonly IReservationRepository _reservations;
 
-    public VehicleService(IVehicleRepository vehicles, IDriverRepository drivers)
+    public VehicleService(
+        IVehicleRepository vehicles,
+        IDriverRepository drivers,
+        IParkingRecordRepository parkingRecords,
+        IReservationRepository reservations)
     {
         _vehicles = vehicles;
         _drivers = drivers;
+        _parkingRecords = parkingRecords;
+        _reservations = reservations;
     }
 
     public async Task<PagedResult<Vehicle>> GetPagedAsync(string? search, int pageNumber, int pageSize)
@@ -123,13 +131,26 @@ public class VehicleService : IVehicleService
 
         try
         {
+            // Remove the vehicle's parking and reservation history so the delete is not blocked.
+            var parkingRecords = await _parkingRecords.Query().Where(r => r.VehicleId == id).ToListAsync();
+            foreach (var record in parkingRecords)
+            {
+                _parkingRecords.Remove(record);
+            }
+
+            var reservations = await _reservations.Query().Where(r => r.VehicleId == id).ToListAsync();
+            foreach (var reservation in reservations)
+            {
+                _reservations.Remove(reservation);
+            }
+
             _vehicles.Remove(vehicle);
             await _vehicles.SaveChangesAsync();
             return ServiceResult.Success();
         }
         catch (DbUpdateException)
         {
-            return ServiceResult.Failure("This vehicle cannot be deleted because it has parking or reservation history.");
+            return ServiceResult.Failure("The vehicle could not be deleted. Please try again.");
         }
     }
 }

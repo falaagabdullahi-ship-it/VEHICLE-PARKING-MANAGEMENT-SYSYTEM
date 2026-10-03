@@ -79,6 +79,26 @@ public class ReservationService : IReservationService
         return ServiceResult.Success();
     }
 
+    public async Task<ServiceResult> DeleteAsync(int reservationId)
+    {
+        var reservation = await _reservations.GetByIdAsync(reservationId);
+        if (reservation is null)
+        {
+            return ServiceResult.Failure("Reservation not found.");
+        }
+
+        try
+        {
+            _reservations.Remove(reservation);
+            await _reservations.SaveChangesAsync();
+            return ServiceResult.Success();
+        }
+        catch (DbUpdateException)
+        {
+            return ServiceResult.Failure("The reservation could not be deleted. Please try again.");
+        }
+    }
+
     public async Task<PagedResult<Reservation>> GetPagedAsync(string? search, string? scopedToUserId, int pageNumber, int pageSize)
     {
         await ExpireOverdueReservationsAsync();
