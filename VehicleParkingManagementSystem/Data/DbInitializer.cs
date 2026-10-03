@@ -74,22 +74,38 @@ public static class DbInitializer
             await db.SaveChangesAsync();
         }
 
-        if (!db.ParkingPackages.Any())
-        {
-            db.ParkingPackages.AddRange(
-                new ParkingPackage { VehicleType = VehicleType.Car, Name = "2 Hour", DurationMinutes = 120, Price = 200m },
-                new ParkingPackage { VehicleType = VehicleType.Car, Name = "6 Hour", DurationMinutes = 360, Price = 500m },
-                new ParkingPackage { VehicleType = VehicleType.Motorcycle, Name = "2 Hour", DurationMinutes = 120, Price = 100m },
-                new ParkingPackage { VehicleType = VehicleType.Motorcycle, Name = "6 Hour", DurationMinutes = 360, Price = 250m },
-                new ParkingPackage { VehicleType = VehicleType.Van, Name = "2 Hour", DurationMinutes = 120, Price = 240m },
-                new ParkingPackage { VehicleType = VehicleType.Van, Name = "6 Hour", DurationMinutes = 360, Price = 600m },
-                new ParkingPackage { VehicleType = VehicleType.Truck, Name = "2 Hour", DurationMinutes = 120, Price = 400m },
-                new ParkingPackage { VehicleType = VehicleType.Truck, Name = "6 Hour", DurationMinutes = 360, Price = 1000m },
-                new ParkingPackage { VehicleType = VehicleType.Bus, Name = "2 Hour", DurationMinutes = 120, Price = 400m },
-                new ParkingPackage { VehicleType = VehicleType.Bus, Name = "6 Hour", DurationMinutes = 360, Price = 1000m }
-            );
+        // Standard packages per vehicle type. Any that are missing (matched by type + name) are added
+        // on startup, so existing databases get them too without duplicating packages already there.
+        var standardPackages = new List<ParkingPackage>();
+        AddStandardPackages(standardPackages, VehicleType.Motorcycle, 10m, 18m, 25m, 45m, 80m, 120m);
+        AddStandardPackages(standardPackages, VehicleType.Car, 20m, 35m, 50m, 90m, 160m, 250m);
+        AddStandardPackages(standardPackages, VehicleType.Van, 25m, 45m, 65m, 120m, 200m, 300m);
+        AddStandardPackages(standardPackages, VehicleType.Bus, 35m, 60m, 90m, 160m, 280m, 420m);
+        AddStandardPackages(standardPackages, VehicleType.Truck, 40m, 70m, 100m, 180m, 320m, 480m);
 
+        var existingPackages = await db.ParkingPackages
+            .Select(p => new { p.VehicleType, p.Name })
+            .ToListAsync();
+
+        var missingPackages = standardPackages
+            .Where(s => !existingPackages.Any(e => e.VehicleType == s.VehicleType && e.Name == s.Name))
+            .ToList();
+
+        if (missingPackages.Count > 0)
+        {
+            db.ParkingPackages.AddRange(missingPackages);
             await db.SaveChangesAsync();
         }
+    }
+
+    private static void AddStandardPackages(List<ParkingPackage> packages, VehicleType type,
+        decimal oneHour, decimal twoHours, decimal threeHours, decimal sixHours, decimal twelveHours, decimal fullDay)
+    {
+        packages.Add(new ParkingPackage { VehicleType = type, Name = "1 Hour", DurationMinutes = 60, Price = oneHour });
+        packages.Add(new ParkingPackage { VehicleType = type, Name = "2 Hours", DurationMinutes = 120, Price = twoHours });
+        packages.Add(new ParkingPackage { VehicleType = type, Name = "3 Hours", DurationMinutes = 180, Price = threeHours });
+        packages.Add(new ParkingPackage { VehicleType = type, Name = "6 Hours", DurationMinutes = 360, Price = sixHours });
+        packages.Add(new ParkingPackage { VehicleType = type, Name = "12 Hours", DurationMinutes = 720, Price = twelveHours });
+        packages.Add(new ParkingPackage { VehicleType = type, Name = "Full Day", DurationMinutes = 1440, Price = fullDay });
     }
 }
