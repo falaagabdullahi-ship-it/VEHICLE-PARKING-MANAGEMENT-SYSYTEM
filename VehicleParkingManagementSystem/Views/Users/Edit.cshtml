@@ -1,0 +1,50 @@
+@model VehicleParkingManagementSystem.Models.ViewModels.Users.EditUserViewModel
+@{
+    ViewData["Title"] = "Edit Account";
+}
+
+<h3 class="mb-3">Edit Account</h3>
+
+<div class="app-card" style="max-width: 600px;">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2" role="alert"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Email" />
+
+            @if (!string.IsNullOrEmpty(Model.Email))
+            {
+                <p class="text-muted small mb-3">Email: @Model.Email</p>
+            }
+
+            <div class="mb-3">
+                <label asp-for="UserName" class="form-label"></label>
+                <input asp-for="UserName" class="form-control" autofocus />
+                <span asp-validation-for="UserName" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Role" class="form-label"></label>
+                <select asp-for="Role" class="form-select">
+                    <option value="@VehicleParkingManagementSystem.Models.AppRoles.Driver">User (Driver)</option>
+                    <option value="@VehicleParkingManagementSystem.Models.AppRoles.ParkingOfficer">Parking Officer</option>
+                    <option value="@VehicleParkingManagementSystem.Models.AppRoles.Admin">Administrator</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="NewPassword" class="form-label"></label>
+                <input asp-for="NewPassword" class="form-control" autocomplete="new-password" />
+                <div class="form-text">Leave empty to keep the current password.</div>
+                <span asp-validation-for="NewPassword" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

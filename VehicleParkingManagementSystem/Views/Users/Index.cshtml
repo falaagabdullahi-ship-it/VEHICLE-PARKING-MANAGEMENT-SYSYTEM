@@ -29,13 +29,14 @@
     <div class="table-responsive">
         <table class="table table-modern table-hover mb-0 align-middle">
             <thead>
-                <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role(s)</th><th>Status</th><th class="text-end">Actions</th></tr>
+                <tr><th>Name</th><th>Username</th><th>Email</th><th>Phone</th><th>Role(s)</th><th>Status</th><th class="text-end">Actions</th></tr>
             </thead>
             <tbody>
                 @foreach (var user in Model.Items)
                 {
                     <tr>
                         <td class="fw-semibold">@user.FullName</td>
+                        <td>@user.UserName</td>
                         <td>@user.Email</td>
                         <td>@user.PhoneNumber</td>
                         <td>
@@ -55,6 +56,7 @@
                             }
                         </td>
                         <td class="text-end">
+                            <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
                             <form asp-action="ToggleLockout" asp-route-id="@user.Id" method="post" class="d-inline">
                                 <button type="submit" class="btn btn-sm @(user.IsLockedOut ? "btn-outline-success" : "btn-outline-danger")">
                                     @(user.IsLockedOut ? "Unlock" : "Lock")
@@ -65,7 +67,7 @@
                 }
                 @if (!Model.Items.Any())
                 {
-                    <tr><td colspan="6" class="text-center text-muted py-4">No users found.</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted py-4">No users found.</td></tr>
                 }
             </tbody>
         </table>

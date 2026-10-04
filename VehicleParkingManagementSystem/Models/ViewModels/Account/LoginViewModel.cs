@@ -4,7 +4,7 @@ namespace VehicleParkingManagementSystem.Models.ViewModels.Account;
 
 public class LoginViewModel
 {
-    [Required, EmailAddress, Display(Name = "Email")]
+    [Required, Display(Name = "Username")]
     public string Email { get; set; } = string.Empty;
 
     [Required, DataType(DataType.Password)]

@@ -69,6 +69,33 @@ public class UsersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    public async Task<IActionResult> Edit(string id)
+    {
+        var model = await _userManagementService.GetForEditAsync(id);
+        if (model is null) return NotFound();
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(EditUserViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        var currentUserId = _userManager.GetUserId(User)!;
+        var result = await _userManagementService.UpdateUserAsync(model, currentUserId);
+        if (!result.Succeeded)
+        {
+            ModelState.AddModelError(string.Empty, result.Error!);
+            return View(model);
+        }
+
+        var details = $"{model.UserName} ({model.Role}){(string.IsNullOrEmpty(model.NewPassword) ? "" : ", password reset")}";
+        await _auditService.LogAsync(currentUserId, "Update", "User", model.Id, details: details);
+        TempData["StatusMessage"] = $"Account {model.UserName} updated.";
+        return RedirectToAction(nameof(Index));
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ToggleLockout(string id)

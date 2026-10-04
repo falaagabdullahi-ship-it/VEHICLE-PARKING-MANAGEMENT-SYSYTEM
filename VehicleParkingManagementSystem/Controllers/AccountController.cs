@@ -59,7 +59,9 @@ public class AccountController : Controller
             return View(model);
         }
 
-        var user = await _userManager.FindByEmailAsync(model.Email);
+        // The login field accepts either a username or an email address.
+        var user = await _userManager.FindByNameAsync(model.Email.Trim())
+            ?? await _userManager.FindByEmailAsync(model.Email.Trim());
         if (user is null)
         {
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");

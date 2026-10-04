@@ -25,6 +25,7 @@ public class UserManagementService : IUserManagementService
             var term = search.Trim();
             query = query.Where(u =>
                 u.Email!.Contains(term) ||
+                u.UserName!.Contains(term) ||
                 u.FirstName.Contains(term) ||
                 u.LastName.Contains(term));
         }
@@ -45,6 +46,7 @@ public class UserManagementService : IUserManagementService
             {
                 Id = user.Id,
                 FullName = user.FullName,
+                UserName = user.UserName ?? string.Empty,
                 Email = user.Email ?? string.Empty,
                 PhoneNumber = user.PhoneNumber ?? string.Empty,
                 Roles = roles.ToList(),
@@ -63,7 +65,7 @@ public class UserManagementService : IUserManagementService
 
     public async Task<ServiceResult> CreateStaffUserAsync(CreateStaffUserViewModel model)
     {
-        if (model.Role is not (AppRoles.Admin or AppRoles.ParkingOfficer))
+        if (model.Role is not (AppRoles.Admin or AppRoles.ParkingOfficer or AppRoles.Driver))
         {
             return ServiceResult.Failure("Invalid role selected.");
         }
@@ -91,6 +93,69 @@ public class UserManagementService : IUserManagementService
         }
 
         await _userManager.AddToRoleAsync(user, model.Role);
+        return ServiceResult.Success();
+    }
+
+    public async Task<EditUserViewModel?> GetForEditAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user is null) return null;
+
+        var roles = await _userManager.GetRolesAsync(user);
+        return new EditUserViewModel
+        {
+            Id = user.Id,
+            Email = user.Email,
+            UserName = user.UserName ?? string.Empty,
+            Role = roles.FirstOrDefault() ?? AppRoles.Driver
+        };
+    }
+
+    public async Task<ServiceResult> UpdateUserAsync(EditUserViewModel model, string currentUserId)
+    {
+        if (!AppRoles.All.Contains(model.Role))
+        {
+            return ServiceResult.Failure("Invalid role selected.");
+        }
+
+        var user = await _userManager.FindByIdAsync(model.Id);
+        if (user is null)
+        {
+            return ServiceResult.Failure("User not found.");
+        }
+
+        if (user.Id == currentUserId && model.Role != AppRoles.Admin)
+        {
+            return ServiceResult.Failure("You cannot remove the Admin role from your own account.");
+        }
+
+        var userName = model.UserName.Trim();
+        if (!string.Equals(user.UserName, userName, StringComparison.Ordinal))
+        {
+            var renamed = await _userManager.SetUserNameAsync(user, userName);
+            if (!renamed.Succeeded)
+            {
+                return ServiceResult.Failure(string.Join(" ", renamed.Errors.Select(e => e.Description)));
+            }
+        }
+
+        if (!string.IsNullOrEmpty(model.NewPassword))
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var reset = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+            if (!reset.Succeeded)
+            {
+                return ServiceResult.Failure(string.Join(" ", reset.Errors.Select(e => e.Description)));
+            }
+        }
+
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        if (currentRoles.Count != 1 || currentRoles[0] != model.Role)
+        {
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            await _userManager.AddToRoleAsync(user, model.Role);
+        }
+
         return ServiceResult.Success();
     }
 
