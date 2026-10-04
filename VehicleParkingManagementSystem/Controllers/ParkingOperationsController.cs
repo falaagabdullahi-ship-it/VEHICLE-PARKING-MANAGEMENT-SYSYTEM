@@ -50,6 +50,7 @@ public class ParkingOperationsController : Controller
         {
             AreaOptions = await GetAreaOptionsAsync(),
             PackageOptions = await _packageRepository.Query()
+                .Include(p => p.ParkingArea)
                 .Where(p => p.IsActive)
                 .OrderBy(p => p.VehicleType).ThenBy(p => p.DurationMinutes)
                 .ToListAsync()

@@ -38,11 +38,13 @@ public class SettingsController : Controller
                     Id = p.Id,
                     VehicleType = p.VehicleType,
                     Name = p.Name,
+                    ParkingAreaName = p.ParkingArea != null ? p.ParkingArea.Name : null,
                     DurationHours = p.DurationMinutes / 60m,
                     Price = p.Price,
                     IsActive = p.IsActive
                 })
-                .ToListAsync()
+                .ToListAsync(),
+            ParkingAreas = await _db.ParkingAreas.OrderBy(a => a.Name).ToListAsync()
         };
 
         return View(model);
@@ -103,10 +105,17 @@ public class SettingsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        if (model.ParkingAreaId is not null && !await _db.ParkingAreas.AnyAsync(a => a.Id == model.ParkingAreaId))
+        {
+            TempData["StatusMessage"] = "The selected parking area no longer exists.";
+            return RedirectToAction(nameof(Index));
+        }
+
         _db.ParkingPackages.Add(new ParkingPackage
         {
             VehicleType = model.VehicleType,
             Name = model.Name.Trim(),
+            ParkingAreaId = model.ParkingAreaId,
             DurationMinutes = (int)Math.Round(model.DurationHours * 60),
             Price = model.Price,
             IsActive = true

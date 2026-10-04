@@ -8,6 +8,9 @@ public class ParkingPackageRow
     public VehicleType VehicleType { get; set; }
     public string Name { get; set; } = string.Empty;
 
+    /// <summary>Display only; null means the package is valid in any area.</summary>
+    public string? ParkingAreaName { get; set; }
+
     [Range(0.1, 720)]
     public decimal DurationHours { get; set; }
 

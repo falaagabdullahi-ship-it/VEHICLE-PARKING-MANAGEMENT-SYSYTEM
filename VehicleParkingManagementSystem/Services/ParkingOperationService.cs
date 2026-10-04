@@ -83,6 +83,17 @@ public class ParkingOperationService : IParkingOperationService
                 return ServiceResult<ParkingRecord>.Failure($"Selected package is not valid for a {vehicle.VehicleType}.");
             }
 
+            if (package.ParkingAreaId is not null)
+            {
+                if (parkingAreaId is not null && parkingAreaId != package.ParkingAreaId)
+                {
+                    return ServiceResult<ParkingRecord>.Failure("Selected package is not valid for this parking area.");
+                }
+
+                // An area-specific package decides where the vehicle parks.
+                parkingAreaId = package.ParkingAreaId;
+            }
+
             paidUntil = now.AddMinutes(package.DurationMinutes);
             fee = package.Price;
         }

@@ -61,7 +61,7 @@
         <form asp-action="UpdatePackages" method="post">
             <table class="table align-middle mb-0">
                 <thead>
-                    <tr><th>Vehicle Type</th><th>Name</th><th>Duration (hours)</th><th>Price</th><th>Active</th><th></th></tr>
+                    <tr><th>Vehicle Type</th><th>Name</th><th>Parking Area</th><th>Duration (hours)</th><th>Price</th><th>Active</th><th></th></tr>
                 </thead>
                 <tbody>
                     @for (var i = 0; i < Model.Packages.Count; i++)
@@ -75,6 +75,7 @@
                                 <input type="hidden" name="[@i].Name" value="@row.Name" />
                             </td>
                             <td>@row.Name</td>
+                            <td>@(row.ParkingAreaName ?? "Any Area")</td>
                             <td>
                                 <input name="[@i].DurationHours" value="@row.DurationHours.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)" class="form-control form-control-sm" type="number" step="0.25" min="0.25" style="max-width: 100px;" />
                             </td>
@@ -96,7 +97,7 @@
                     }
                     @if (!Model.Packages.Any())
                     {
-                        <tr><td colspan="6" class="text-center text-muted py-3">No parking packages configured yet.</td></tr>
+                        <tr><td colspan="7" class="text-center text-muted py-3">No parking packages configured yet.</td></tr>
                     }
                 </tbody>
             </table>
@@ -114,7 +115,7 @@
 
         <h6>Add Package</h6>
         <form asp-action="CreatePackage" method="post" class="row g-2 align-items-end">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Vehicle Type</label>
                 <select name="VehicleType" class="form-select form-select-sm">
                     @foreach (var type in Enum.GetValues<VehicleParkingManagementSystem.Models.VehicleType>())
@@ -123,9 +124,19 @@
                     }
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Name</label>
                 <input name="Name" class="form-control form-control-sm" placeholder="e.g. 2 Hour" required />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Parking Area</label>
+                <select name="ParkingAreaId" class="form-select form-select-sm">
+                    <option value="">Any Area</option>
+                    @foreach (var area in Model.ParkingAreas)
+                    {
+                        <option value="@area.Id">@area.Name</option>
+                    }
+                </select>
             </div>
             <div class="col-md-2">
                 <label class="form-label">Duration (hours)</label>

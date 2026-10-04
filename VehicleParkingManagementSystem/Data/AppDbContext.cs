@@ -131,6 +131,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole, str
         builder.Entity<ParkingPackage>(entity =>
         {
             entity.Property(p => p.Price).HasColumnType("decimal(10,2)");
+            entity.HasOne(p => p.ParkingArea)
+                .WithMany()
+                .HasForeignKey(p => p.ParkingAreaId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
 
         // ProfilePicture

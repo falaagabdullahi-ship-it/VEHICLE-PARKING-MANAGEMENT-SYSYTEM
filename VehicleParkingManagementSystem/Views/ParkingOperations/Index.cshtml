@@ -28,7 +28,7 @@
             </div>
             <div class="col-md-2">
                 <label class="form-label">Parking Area (optional)</label>
-                <select name="ParkingAreaId" asp-items="checkIn.AreaOptions" class="form-select">
+                <select id="checkInArea" name="ParkingAreaId" asp-items="checkIn.AreaOptions" class="form-select">
                     <option value="">-- Any Area (auto) --</option>
                 </select>
             </div>
@@ -47,7 +47,7 @@
                     <option value="">-- Select Package --</option>
                     @foreach (var package in checkIn.PackageOptions)
                     {
-                        <option value="@package.Id" data-type="@package.VehicleType">@package.Name — @(package.DurationMinutes / 60.0)h — $@package.Price</option>
+                        <option value="@package.Id" data-type="@package.VehicleType" data-area="@package.ParkingAreaId">@package.Name — @(package.DurationMinutes / 60.0)h — $@package.Price@(package.ParkingArea is null ? "" : " — " + package.ParkingArea.Name)</option>
                     }
                 </select>
             </div>
@@ -61,20 +61,27 @@
 <script>
     (function () {
         var typeSelect = document.getElementById('checkInVehicleType');
+        var areaSelect = document.getElementById('checkInArea');
         var packageSelect = document.getElementById('checkInPackage');
         if (!typeSelect || !packageSelect) return;
 
         var allOptions = Array.prototype.slice.call(packageSelect.querySelectorAll('option[data-type]'));
 
+        // Show packages for the chosen vehicle type that are valid in any area or in the chosen area.
+        // With "Any Area (auto)" selected, area-specific packages are shown too; picking one assigns its area.
         function filterPackages() {
             var selectedType = typeSelect.value;
+            var selectedArea = areaSelect ? areaSelect.value : '';
             packageSelect.value = '';
             allOptions.forEach(function (opt) {
-                opt.hidden = opt.getAttribute('data-type') !== selectedType;
+                var packageArea = opt.getAttribute('data-area') || '';
+                var areaOk = packageArea === '' || selectedArea === '' || packageArea === selectedArea;
+                opt.hidden = opt.getAttribute('data-type') !== selectedType || !areaOk;
             });
         }
 
         typeSelect.addEventListener('change', filterPackages);
+        if (areaSelect) areaSelect.addEventListener('change', filterPackages);
         filterPackages();
     })();
 </script>
